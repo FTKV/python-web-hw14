@@ -34,10 +34,5 @@ class Settings(BaseSettings):
     cloudinary_api_secret: str
     test: bool
 
-    # class Config:
-    #     env_file = pathlib.Path(__file__).resolve().parent.parent.parent / ".env"
-    #     env_file_encoding = "utf-8"
-    #     extra = "ignore"
-
 
 settings = Settings()
