@@ -86,7 +86,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         body = ContactModel(
             first_name="test",
             last_name="test",
-            email="test@api.com",
+            email="test@test.com",
             phone="1234567890",
             birthday=date.today(),
             address="test",
@@ -106,7 +106,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         body = ContactModel(
             first_name="test",
             last_name="test",
-            email="test@api.com",
+            email="test@test.com",
             phone="1234567890",
             birthday=date.today(),
             address="test",
@@ -123,7 +123,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         body = ContactModel(
             first_name="test",
             last_name="test",
-            email="test@api.com",
+            email="test@test.com",
             phone="1234567890",
             birthday=date.today(),
             address="test",

@@ -32,8 +32,8 @@ sphinx = "^7.2.6"
 [tool.poetry.group.test.dependencies]
 httpx = "^0.25.2"
 aiosqlite = "^0.19.0"
-pytest-anyio = "^0.0.0"
 pytest = "^7.4.3"
+pytest-anyio = "^0.0.0"
 pytest-cov = "^4.1.0"
 
 [tool.pytest.ini_options]

@@ -7,7 +7,6 @@ from redis.asyncio.client import Redis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-# from src.database.connect_db import redis_db1
 from src.database.models import User
 from src.schemas.users import UserModel
 
