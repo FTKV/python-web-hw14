@@ -35,7 +35,12 @@ class MockRedis:
 
 class TestUsers(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
-        self.user = User(id=uuid.uuid4(), email="test@test.com")
+        self.user = User(
+            id=uuid.uuid4(),
+            username="test",
+            email="test@test.com",
+            password="1234567890",
+        )
         self.session = MagicMock(spec=AsyncSession)
         self.redis_db = MagicMock(spec=MockRedis)
 
