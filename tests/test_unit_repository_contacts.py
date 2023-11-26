@@ -28,6 +28,14 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.user = User(id=uuid.uuid4())
         self.session = MagicMock(spec=AsyncSession)
+        self.body = ContactModel(
+            first_name="test",
+            last_name="test",
+            email="test@test.com",
+            phone="1234567890",
+            birthday=date.today(),
+            address="test",
+        )
 
     async def test_read_contacts(self):
         contacts = [Contact(), Contact(), Contact()]
@@ -83,55 +91,36 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(result)
 
     async def test_create_contact(self):
-        body = ContactModel(
-            first_name="test",
-            last_name="test",
-            email="test@test.com",
-            phone="1234567890",
-            birthday=date.today(),
-            address="test",
-        )
         self.session.execute.return_value = MagicMock(spec=ChunkedIteratorResult)
         self.session.execute.return_value.scalar.return_value = None
-        result = await create_contact(body=body, user=self.user, session=self.session)
-        self.assertEqual(result.first_name, body.first_name)
-        self.assertEqual(result.last_name, body.last_name)
-        self.assertEqual(result.email, body.email)
-        self.assertEqual(result.phone, body.phone)
-        self.assertEqual(result.birthday, body.birthday)
-        self.assertEqual(result.address, body.address)
+        result = await create_contact(
+            body=self.body, user=self.user, session=self.session
+        )
+        self.assertEqual(result.first_name, self.body.first_name)
+        self.assertEqual(result.last_name, self.body.last_name)
+        self.assertEqual(result.email, self.body.email)
+        self.assertEqual(result.phone, self.body.phone)
+        self.assertEqual(result.birthday, self.body.birthday)
+        self.assertEqual(result.address, self.body.address)
         self.assertTrue(hasattr(result, "id"))
 
     async def test_update_contact_found(self):
-        body = ContactModel(
-            first_name="test",
-            last_name="test",
-            email="test@test.com",
-            phone="1234567890",
-            birthday=date.today(),
-            address="test",
-        )
         contact = Contact()
         self.session.execute.return_value = MagicMock(spec=ChunkedIteratorResult)
         self.session.execute.return_value.scalar.return_value = contact
         result = await update_contact(
-            contact_id=contact.id, body=body, user=self.user, session=self.session
+            contact_id=contact.id, body=self.body, user=self.user, session=self.session
         )
         self.assertEqual(result, contact)
 
     async def test_update_contact_not_found(self):
-        body = ContactModel(
-            first_name="test",
-            last_name="test",
-            email="test@test.com",
-            phone="1234567890",
-            birthday=date.today(),
-            address="test",
-        )
         self.session.execute.return_value = MagicMock(spec=ChunkedIteratorResult)
         self.session.execute.return_value.scalar.return_value = None
         result = await update_contact(
-            contact_id=uuid.uuid4(), body=body, user=self.user, session=self.session
+            contact_id=uuid.uuid4(),
+            body=self.body,
+            user=self.user,
+            session=self.session,
         )
         self.assertIsNone(result)
 
