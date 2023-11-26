@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import datetime, date, timedelta, timezone
+from datetime import date, timedelta
 from typing import List
 
 from sqlalchemy import select, and_, or_
@@ -196,7 +196,6 @@ async def update_contact(
         contact.phone = body.phone
         contact.birthday = body.birthday
         contact.address = body.address
-        contact.updated_at = datetime.now(timezone.utc)
         await session.commit()
     return contact
 

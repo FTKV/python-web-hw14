@@ -21,6 +21,7 @@ class Settings(BaseSettings):
     redis_host: str
     redis_port: int
     redis_password: str
+    redis_expire: int
     rate_limiter_times: int
     rate_limiter_seconds: int
     mail_server: str

@@ -22,6 +22,7 @@ Base = declarative_base()
 
 class Contact(Base):
     __tablename__ = "contacts"
+    __mapper_args__ = {"eager_defaults": True}
     __table_args__ = (
         UniqueConstraint("user_id", "email", name="uix_email"),
         UniqueConstraint("user_id", "phone", name="uix_phone"),
@@ -43,7 +44,9 @@ class Contact(Base):
         DateTime(timezone=True), server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
     )
     user_id: Mapped[int] = (
         mapped_column(Integer, ForeignKey("users.id", onupdate="CASCADE"))
@@ -61,6 +64,7 @@ class Contact(Base):
 
 class User(Base):
     __tablename__ = "users"
+    __mapper_args__ = {"eager_defaults": True}
     id: Mapped[int] = (
         mapped_column(Integer, primary_key=True)
         if settings.test
@@ -75,7 +79,9 @@ class User(Base):
         DateTime(timezone=True), server_default=func.now()
     )
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
     )
     avatar: Mapped[str] = mapped_column(String(254), nullable=True)
     refresh_token: Mapped[str] = mapped_column(String(1024), nullable=True)

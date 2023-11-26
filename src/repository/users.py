@@ -1,4 +1,3 @@
-from datetime import datetime, timezone
 import pickle
 
 from libgravatar import Gravatar
@@ -7,6 +6,7 @@ from redis.asyncio.client import Redis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.conf.config import settings
 from src.database.models import User
 from src.schemas.users import UserModel
 
@@ -23,7 +23,7 @@ async def set_user_in_cache(user: User, redis_db: Redis) -> None:
     :rtype: None
     """
     await redis_db.set(f"user: {user.email}", pickle.dumps(user))
-    await redis_db.expire(f"user: {user.email}", 3600)
+    await redis_db.expire(f"user: {user.email}", settings.redis_expire)
 
 
 async def get_user_by_email_from_cache(email: EmailStr, redis_db: Redis) -> User | None:
@@ -103,7 +103,6 @@ async def update_refresh_token(
     :rtype: None
     """
     user.refresh_token = token
-    user.updated_at = datetime.now(timezone.utc)
     await session.commit()
     await set_user_in_cache(user, redis_db)
 
@@ -125,7 +124,6 @@ async def confirm_email(
     """
     user = await get_user_by_email(email, session)
     user.is_email_confirmed = True
-    user.updated_at = datetime.now(timezone.utc)
     await session.commit()
     await set_user_in_cache(user, redis_db)
 
@@ -147,7 +145,6 @@ async def reset_password(
     """
     user = await get_user_by_email(email, session)
     user.is_password_valid = False
-    user.updated_at = datetime.now(timezone.utc)
     await session.commit()
     await set_user_in_cache(user, redis_db)
 
@@ -172,7 +169,6 @@ async def set_password(
     user = await get_user_by_email(email, session)
     user.password = password
     user.is_password_valid = True
-    user.updated_at = datetime.now(timezone.utc)
     await session.commit()
     await set_user_in_cache(user, redis_db)
 
@@ -196,7 +192,6 @@ async def update_avatar(
     """
     user = await get_user_by_email(email, session)
     user.avatar = url
-    user.updated_at = datetime.now(timezone.utc)
     await session.commit()
     await set_user_in_cache(user, redis_db)
     return user
