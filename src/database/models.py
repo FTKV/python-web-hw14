@@ -45,9 +45,6 @@ class Contact(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
-    user_id: Mapped[UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.id", onupdate="CASCADE")
-    )
     user_id: Mapped[int] = (
         mapped_column(Integer, ForeignKey("users.id", onupdate="CASCADE"))
         if settings.test
