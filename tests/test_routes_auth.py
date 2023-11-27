@@ -12,7 +12,7 @@ from src.repository import users as repository_users
 
 
 @pytest.mark.anyio
-async def test_create_user(client, user, monkeypatch):
+async def test_signup_user(client, user, monkeypatch):
     mock_send_email = MagicMock()
     monkeypatch.setattr("src.routes.auth.send_email_for_verification", mock_send_email)
     response = await client.post(
@@ -21,12 +21,13 @@ async def test_create_user(client, user, monkeypatch):
     )
     assert response.status_code == 201, response.text
     data = response.json()
+    assert data["user"]["username"] == user.get("username")
     assert data["user"]["email"] == user.get("email")
     assert "id" in data["user"]
 
 
 @pytest.mark.anyio
-async def test_repeat_create_user(client, user):
+async def test_repeat_signup_user(client, user):
     response = await client.post(
         "/api/auth/signup",
         json=user,
@@ -62,17 +63,6 @@ async def test_login_user(client, session, user):
 
 
 @pytest.mark.anyio
-async def test_login_wrong_password(client, user):
-    response = await client.post(
-        "/api/auth/login",
-        data={"username": user.get("email"), "password": "password"},
-    )
-    assert response.status_code == 401, response.text
-    data = response.json()
-    assert data["detail"] == "Invalid password"
-
-
-@pytest.mark.anyio
 async def test_login_wrong_email(client, user):
     response = await client.post(
         "/api/auth/login",
@@ -81,3 +71,14 @@ async def test_login_wrong_email(client, user):
     assert response.status_code == 401, response.text
     data = response.json()
     assert data["detail"] == "Invalid email"
+
+
+@pytest.mark.anyio
+async def test_login_wrong_password(client, user):
+    response = await client.post(
+        "/api/auth/login",
+        data={"username": user.get("email"), "password": "password"},
+    )
+    assert response.status_code == 401, response.text
+    data = response.json()
+    assert data["detail"] == "Invalid password"

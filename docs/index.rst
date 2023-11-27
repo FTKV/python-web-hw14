@@ -1,5 +1,5 @@
 .. Contacts API documentation master file, created by
-   sphinx-quickstart on Sat Nov 25 18:16:27 2023.
+   sphinx-quickstart on Mon Nov 27 18:19:48 2023.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
@@ -35,6 +35,14 @@ REST API repository Users
   :show-inheritance:
 
 
+REST API routes Auth
+====================
+.. automodule:: src.routes.auth
+  :members:
+  :undoc-members:
+  :show-inheritance:
+
+
 REST API routes Contacts
 ========================
 .. automodule:: src.routes.contacts
@@ -46,14 +54,6 @@ REST API routes Contacts
 REST API routes Users
 =====================
 .. automodule:: src.routes.users
-  :members:
-  :undoc-members:
-  :show-inheritance:
-
-
-REST API routes Auth
-====================
-.. automodule:: src.routes.auth
   :members:
   :undoc-members:
   :show-inheritance:

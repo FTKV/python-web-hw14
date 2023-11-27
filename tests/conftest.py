@@ -26,12 +26,12 @@ AsyncDBSession = async_sessionmaker(
 )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def anyio_backend():
     return "asyncio"
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 async def session():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
@@ -44,7 +44,7 @@ async def session():
         await session.close()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 async def client(session):
     async def override_get_session():
         try:
@@ -61,7 +61,7 @@ async def client(session):
     )
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def user():
     return {
         "username": "test",

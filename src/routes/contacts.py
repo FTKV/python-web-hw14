@@ -14,7 +14,7 @@ from src.services.auth import auth_service
 router = APIRouter(prefix="/contacts", tags=["contacts"])
 
 
-@router.get("/", response_model=List[ContactResponse])
+@router.get("", response_model=List[ContactResponse])
 async def read_contacts(
     offset: int = Query(default=0, ge=0),
     limit: int = Query(default=10, ge=1, le=1000),
@@ -25,7 +25,7 @@ async def read_contacts(
     session: AsyncSession = Depends(get_session),
 ):
     """
-    Handles a GET-operation to '/' contacts subroute and reads a list of contacts for a specific user with specified pagination parameters and search by first name, last name and email.
+    Handles a GET-operation to contacts route and reads a list of contacts for a specific user with specified pagination parameters and search by first name, last name and email.
 
     :param offset: The number of contacts to skip (default = 0, min value = 0).
     :type offset: int
@@ -80,7 +80,7 @@ async def read_contacts_with_birthdays_in_n_days(
 
 @router.get("/{contact_id}", response_model=ContactResponse)
 async def read_contact(
-    contact_id: UUID4,
+    contact_id: UUID4 | int,
     user: User = Depends(auth_service.get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
@@ -88,7 +88,7 @@ async def read_contact(
     Handles a GET-operation to '/{contact_id}' contacts subroute and reads a single contact with the specified ID for a specific user.
 
     :param contact_id: The ID of the contact to retrieve
-    :type contact_id: UUID4
+    :type contact_id: UUID4 | int
     :param user: The user to retrieve contacts for.
     :type user: User
     :param session: The database session.
@@ -104,14 +104,14 @@ async def read_contact(
     return contact
 
 
-@router.post("/", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
 async def create_contact(
     body: ContactModel,
     user: User = Depends(auth_service.get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
     """
-    Handles a POST-operation to '/' contacts subroute and creates a new contact for a specific user.
+    Handles a POST-operation to contacts route and creates a new contact for a specific user.
 
     :param body: The request body with data for the contact to create.
     :type body: ContactModel
@@ -133,7 +133,7 @@ async def create_contact(
 
 @router.put("/{contact_id}", response_model=ContactResponse)
 async def update_contact(
-    contact_id: UUID4,
+    contact_id: UUID4 | int,
     body: ContactModel,
     user: User = Depends(auth_service.get_current_user),
     session: AsyncSession = Depends(get_session),
@@ -142,7 +142,7 @@ async def update_contact(
     Handles a PUT-operation to '/{contact_id}' contacts subroute and updates a single contact with the specified ID for a specific user.
 
     :param contact_id: The ID of the contact to update
-    :type contact_id: UUID4
+    :type contact_id: UUID4 | int
     :param body: The request body with data for the contact to update.
     :type body: ContactModel
     :param user: The user to update the contact for.
@@ -162,7 +162,7 @@ async def update_contact(
 
 @router.delete("/{contact_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_contact(
-    contact_id: UUID4,
+    contact_id: UUID4 | int,
     user: User = Depends(auth_service.get_current_user),
     session: AsyncSession = Depends(get_session),
 ):
@@ -170,7 +170,7 @@ async def delete_contact(
     Handles a DELETE-operation to '/{contact_id}' contacts subroute and deletes a single contact with the specified ID for a specific user.
 
     :param contact_id: The ID of the contact to delete
-    :type contact_id: UUID4
+    :type contact_id: UUID4 | int
     :param user: The user to delete the contact for.
     :type user: User
     :param session: The database session.

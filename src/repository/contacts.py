@@ -1,5 +1,6 @@
 from collections import defaultdict
 from datetime import date, timedelta
+from pydantic import UUID4
 from typing import List
 
 from sqlalchemy import select, and_, or_
@@ -114,13 +115,13 @@ async def read_contacts_with_birthdays_in_n_days(
 
 
 async def read_contact(
-    contact_id: int, user: User, session: AsyncSession
+    contact_id: UUID4 | int, user: User, session: AsyncSession
 ) -> Contact | None:
     """
     Reads a single contact with the specified ID for a specific user.
 
     :param contact_id: The ID of the contact to retrieve
-    :type contact_id: UUID4
+    :type contact_id: UUID4 | int
     :param user: The user to retrieve contacts for.
     :type user: User
     :param session: The database session.
@@ -168,13 +169,13 @@ async def create_contact(
 
 
 async def update_contact(
-    contact_id: int, body: ContactModel, user: User, session: AsyncSession
+    contact_id: UUID4 | int, body: ContactModel, user: User, session: AsyncSession
 ) -> Contact | None:
     """
     Updates a single contact with the specified ID for a specific user.
 
     :param contact_id: The ID of the contact to update
-    :type contact_id: UUID4
+    :type contact_id: UUID4 | int
     :param body: The request body with data for the contact to update.
     :type body: ContactModel
     :param user: The user to update the contact for.
@@ -201,13 +202,13 @@ async def update_contact(
 
 
 async def delete_contact(
-    contact_id: int, user: User, session: AsyncSession
+    contact_id: UUID4 | int, user: User, session: AsyncSession
 ) -> Contact | None:
     """
     Deletes a single contact with the specified ID for a specific user.
 
     :param contact_id: The ID of the contact to delete
-    :type contact_id: UUID4
+    :type contact_id: UUID4 | int
     :param user: The user to delete the contact for.
     :type user: User
     :param session: The database session.

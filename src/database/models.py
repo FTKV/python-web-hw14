@@ -27,7 +27,7 @@ class Contact(Base):
         UniqueConstraint("user_id", "email", name="uix_email"),
         UniqueConstraint("user_id", "phone", name="uix_phone"),
     )
-    id: Mapped[int] = (
+    id: Mapped[UUID | int] = (
         mapped_column(Integer, primary_key=True)
         if settings.test
         else mapped_column(
@@ -48,7 +48,7 @@ class Contact(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
-    user_id: Mapped[int] = (
+    user_id: Mapped[UUID | int] = (
         mapped_column(Integer, ForeignKey("users.id", onupdate="CASCADE"))
         if settings.test
         else mapped_column(
@@ -65,7 +65,7 @@ class Contact(Base):
 class User(Base):
     __tablename__ = "users"
     __mapper_args__ = {"eager_defaults": True}
-    id: Mapped[int] = (
+    id: Mapped[UUID | int] = (
         mapped_column(Integer, primary_key=True)
         if settings.test
         else mapped_column(
