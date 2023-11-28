@@ -35,20 +35,21 @@ async def get_session():
         await session.close()
 
 
-redis_db0 = redis.Redis(
-    host=settings.redis_host,
-    port=settings.redis_port,
-    db=0,
-    password=settings.redis_password,
+redis_db0 = redis.from_url(
+    settings.redis_url + "/0",
     encoding="utf-8",
     decode_responses=True,
 )
+pool_redis_db1 = redis.ConnectionPool.from_url(settings.redis_url + "/1")
 
-redis_db1 = redis.Redis(
-    host=settings.redis_host,
-    port=settings.redis_port,
-    db=1,
-    password=settings.redis_password,
-    encoding="utf-8",
-    decode_responses=False,
-)
+
+async def get_redis_db1():
+    client = redis.Redis(
+        connection_pool=pool_redis_db1,
+        encoding="utf-8",
+        decode_responses=False,
+    )
+    try:
+        yield client
+    finally:
+        await client.close()

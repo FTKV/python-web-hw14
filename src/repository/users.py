@@ -11,33 +11,33 @@ from src.database.models import User
 from src.schemas.users import UserModel
 
 
-async def set_user_in_cache(user: User, redis_db: Redis) -> None:
+async def set_user_in_cache(user: User, cache: Redis) -> None:
     """
     Sets an user in cache.
 
     :param user: The user to set in cache.
     :type user: User
-    :param redis_db: The client of Redis database.
-    :type redis_db: Redis
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: None.
     :rtype: None
     """
-    await redis_db.set(f"user: {user.email}", pickle.dumps(user))
-    await redis_db.expire(f"user: {user.email}", settings.redis_expire)
+    await cache.set(f"user: {user.email}", pickle.dumps(user))
+    await cache.expire(f"user: {user.email}", settings.redis_expire)
 
 
-async def get_user_by_email_from_cache(email: EmailStr, redis_db: Redis) -> User | None:
+async def get_user_by_email_from_cache(email: EmailStr, cache: Redis) -> User | None:
     """
     Gets an user with the specified email from cache.
 
     :param email: The email of the user to get.
     :type email: EmailStr
-    :param redis_db: The client of Redis database.
-    :type redis_db: Redis
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: The user with the specified email, or None if it does not exist in cache.
     :rtype: User | None
     """
-    user = await redis_db.get(f"user: {email}")
+    user = await cache.get(f"user: {email}")
     if user:
         return pickle.loads(user)
 
@@ -58,7 +58,7 @@ async def get_user_by_email(email: EmailStr, session: AsyncSession) -> User | No
     return user.scalar()
 
 
-async def create_user(body: UserModel, session: AsyncSession, redis_db: Redis) -> User:
+async def create_user(body: UserModel, session: AsyncSession, cache: Redis) -> User:
     """
     Creates a new user.
 
@@ -66,8 +66,8 @@ async def create_user(body: UserModel, session: AsyncSession, redis_db: Redis) -
     :type body: UserModel
     :param session: The database session.
     :type session: AsyncSession
-    :param redis_db: The client of Redis database.
-    :type redis_db: Redis
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: The newly created user.
     :rtype: User
     """
@@ -81,12 +81,12 @@ async def create_user(body: UserModel, session: AsyncSession, redis_db: Redis) -
     session.add(user)
     await session.commit()
     await session.refresh(user)
-    await set_user_in_cache(user, redis_db)
+    await set_user_in_cache(user, cache)
     return user
 
 
 async def update_refresh_token(
-    user: User, token: str | None, session: AsyncSession, redis_db: Redis
+    user: User, token: str | None, session: AsyncSession, cache: Redis
 ) -> None:
     """
     Updates a refresh token for a specific user.
@@ -97,19 +97,17 @@ async def update_refresh_token(
     :type token: str | None
     :param session: The database session.
     :type session: AsyncSession
-    :param redis_db: The client of Redis database.
-    :type redis_db: Redis
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: None.
     :rtype: None
     """
     user.refresh_token = token
     await session.commit()
-    await set_user_in_cache(user, redis_db)
+    await set_user_in_cache(user, cache)
 
 
-async def confirm_email(
-    email: EmailStr, session: AsyncSession, redis_db: Redis
-) -> None:
+async def confirm_email(email: EmailStr, session: AsyncSession, cache: Redis) -> None:
     """
     Confirms an email of user.
 
@@ -117,20 +115,18 @@ async def confirm_email(
     :type email: EmailStr
     :param session: The database session.
     :type session: AsyncSession
-    :param redis_db: The client of Redis database.
-    :type redis_db: Redis
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: None.
     :rtype: None
     """
     user = await get_user_by_email(email, session)
     user.is_email_confirmed = True
     await session.commit()
-    await set_user_in_cache(user, redis_db)
+    await set_user_in_cache(user, cache)
 
 
-async def reset_password(
-    email: EmailStr, session: AsyncSession, redis_db: Redis
-) -> None:
+async def reset_password(email: EmailStr, session: AsyncSession, cache: Redis) -> None:
     """
     Resets a password of user with specified email.
 
@@ -138,19 +134,19 @@ async def reset_password(
     :type email: EmailStr
     :param session: The database session.
     :type session: AsyncSession
-    :param redis_db: The client of Redis database.
-    :type redis_db: Redis
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: None.
     :rtype: None
     """
     user = await get_user_by_email(email, session)
     user.is_password_valid = False
     await session.commit()
-    await set_user_in_cache(user, redis_db)
+    await set_user_in_cache(user, cache)
 
 
 async def set_password(
-    email: EmailStr, password: str, session: AsyncSession, redis_db: Redis
+    email: EmailStr, password: str, session: AsyncSession, cache: Redis
 ) -> None:
     """
     Sets a password of user with specified email.
@@ -161,8 +157,8 @@ async def set_password(
     :type password: str
     :param session: The database session.
     :type session: AsyncSession
-    :param redis_db: The client of Redis database.
-    :type redis_db: Redis
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: None.
     :rtype: None
     """
@@ -170,11 +166,11 @@ async def set_password(
     user.password = password
     user.is_password_valid = True
     await session.commit()
-    await set_user_in_cache(user, redis_db)
+    await set_user_in_cache(user, cache)
 
 
 async def update_avatar(
-    email: EmailStr, url: str, session: AsyncSession, redis_db: Redis
+    email: EmailStr, url: str, session: AsyncSession, cache: Redis
 ) -> User:
     """
     Updates an avatar of user with specified email.
@@ -185,13 +181,13 @@ async def update_avatar(
     :type url: str
     :param session: The database session.
     :type session: AsyncSession
-    :param redis_db: The client of Redis database.
-    :type redis_db: Redis
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: None.
     :rtype: None
     """
     user = await get_user_by_email(email, session)
     user.avatar = url
     await session.commit()
-    await set_user_in_cache(user, redis_db)
+    await set_user_in_cache(user, cache)
     return user

@@ -38,9 +38,23 @@ async def startup():
     await FastAPILimiter.init(redis_db0)
 
 
+origins = [f"{settings.api_protocol}://{settings.api_host}:{settings.api_port}"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+BASE_API_ROUTE = "/api"
+
+
 app.include_router(
     auth.router,
-    prefix="/api",
+    prefix=BASE_API_ROUTE,
     dependencies=[
         Depends(
             RateLimiter(
@@ -52,7 +66,7 @@ app.include_router(
 )
 app.include_router(
     contacts.router,
-    prefix="/api",
+    prefix=BASE_API_ROUTE,
     dependencies=[
         Depends(
             RateLimiter(
@@ -64,7 +78,7 @@ app.include_router(
 )
 app.include_router(
     users.router,
-    prefix="/api",
+    prefix=BASE_API_ROUTE,
     dependencies=[
         Depends(
             RateLimiter(
@@ -75,40 +89,9 @@ app.include_router(
     ],
 )
 
-origins = [f"http://{settings.api_host}:{settings.api_port}"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-BASE_DIR = pathlib.Path(__file__).resolve().parent
-
-
-app.mount(
-    "/static",
-    StaticFiles(directory=BASE_DIR / "static"),
-    name="static",
-)
-
-
-@app.get("/favicon.ico", include_in_schema=False)
-async def favicon():
-    """
-    Handles a GET-operation to get favicon.ico.
-
-    :return: The favicon.ico.
-    :rtype: FileResponse
-    """
-    return FileResponse(BASE_DIR / "static/images/favicon.ico")
-
 
 @app.get(
-    "/api/healthchecker",
+    BASE_API_ROUTE + "/healthchecker",
     dependencies=[
         Depends(
             RateLimiter(
@@ -136,12 +119,34 @@ async def healthchecker(session: AsyncSession = Depends(get_session)):
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail="Database is not configured correctly",
             )
-        return {"message": "OK"}
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Error connecting to the database",
         )
+    return {"message": "OK"}
+
+
+BASE_DIR = pathlib.Path(__file__).resolve().parent
+STATIC_DIR = BASE_DIR / "static"
+
+
+app.mount(
+    "/static",
+    StaticFiles(directory=STATIC_DIR),
+    name="static",
+)
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    """
+    Handles a GET-operation to get favicon.ico.
+
+    :return: The favicon.ico.
+    :rtype: FileResponse
+    """
+    return FileResponse(STATIC_DIR / "images/favicon.ico")
 
 
 @app.get(
@@ -162,7 +167,7 @@ async def read_root():
     :return: The message.
     :rtype: str
     """
-    return {"message": f"{settings.api_name}"}
+    return {"message": settings.api_name}
 
 
 if __name__ == "__main__":

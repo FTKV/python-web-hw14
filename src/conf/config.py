@@ -12,15 +12,14 @@ class Settings(BaseSettings):
     )
 
     api_name: str
+    api_protocol: str
     api_host: str = "localhost"
     api_port: int = 8000
     secret_key: str
     algorithm: str
     sqlalchemy_database_url_sync: str
     sqlalchemy_database_url_async: str
-    redis_host: str
-    redis_port: int
-    redis_password: str
+    redis_url: str
     redis_expire: int
     rate_limiter_times: int
     rate_limiter_seconds: int

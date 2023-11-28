@@ -5,10 +5,11 @@ from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
+from redis.asyncio.client import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.conf.config import settings
-from src.database.connect_db import get_session, redis_db1
+from src.database.connect_db import get_session, get_redis_db1
 from src.repository import users as repository_users
 
 
@@ -296,6 +297,7 @@ class Auth:
         self,
         access_token: str = Depends(oauth2_scheme),
         session: AsyncSession = Depends(get_session),
+        cache: Redis = Depends(get_redis_db1),
     ):
         """
         Gets the current user.
@@ -304,6 +306,8 @@ class Auth:
         :type access_token: str
         :param session: The database session.
         :type session: AsyncSession
+        :param cache: The Redis client.
+        :type cache: Redis
         :return: The current user.
         :rtype: User
         """
@@ -325,12 +329,12 @@ class Auth:
                 raise credentials_exception
         except JWTError:
             raise credentials_exception
-        user = await repository_users.get_user_by_email_from_cache(email, redis_db1)
+        user = await repository_users.get_user_by_email_from_cache(email, cache)
         if user is None:
             user = await repository_users.get_user_by_email(email, session)
             if user is None:
                 raise credentials_exception
-            await repository_users.set_user_in_cache(user, redis_db1)
+            await repository_users.set_user_in_cache(user, cache)
         return user
 
 

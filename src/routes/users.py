@@ -1,9 +1,10 @@
 import cloudinary
 import cloudinary.uploader
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, status
+from redis.asyncio.client import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.database.connect_db import get_session, redis_db1
+from src.database.connect_db import get_session, get_redis_db1
 from src.database.models import User
 from src.repository import users as repository_users
 from src.services.auth import auth_service
@@ -32,6 +33,7 @@ async def update_avatar(
     file: UploadFile = File(),
     user: User = Depends(auth_service.get_current_user),
     session: AsyncSession = Depends(get_session),
+    cache: Redis = Depends(get_redis_db1),
 ):
     """
     Handles a PATCH-operation to '/avatar' users subroute and updates an user's avatar.
@@ -42,6 +44,8 @@ async def update_avatar(
     :type user: User
     :param session: The database session.
     :type session: AsyncSession
+    :param cache: The Redis client.
+    :type cache: Redis
     :return: The updated user.
     :rtype: User
     """
@@ -66,5 +70,5 @@ async def update_avatar(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Upload image error: {str(error_message)}",
         )
-    user = await repository_users.update_avatar(user.email, src_url, session, redis_db1)
+    user = await repository_users.update_avatar(user.email, src_url, session, cache)
     return user
