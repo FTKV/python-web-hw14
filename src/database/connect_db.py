@@ -51,5 +51,10 @@ async def get_redis_db1():
     )
     try:
         yield client
+    except redis.RedisError as error_message:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Redis error: {str(error_message)}",
+        )
     finally:
         await client.close()

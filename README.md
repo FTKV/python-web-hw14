@@ -85,8 +85,8 @@ CLOUDINARY_API_SECRET=...
 TEST=False
 ```
 
-Щоб записати таблицю в БД, можно обійтись без алембіка, запустивши src/database/create_all.py
+Щоб записати таблицю в БД, можно обійтись без алембіка, запустивши tests/create_all.py
 
-Щоб заповнити базу фейковими контактами, змініть тимчасово у .env параметр RATE_LIMITER_TIMES на значення, що відповідає NUMBER_OF_CONTACTS у src/utils/seed.py, щоб пом’якшити обмеження Ratelimiter, зареєструйтесь через Swagger або Postman, скопіюйте access_token у src/utils/seed.py, та запустіть.
+Щоб заповнити базу фейковими контактами, змініть тимчасово у .env параметр RATE_LIMITER_TIMES на значення, що відповідає NUMBER_OF_CONTACTS у tests/seed.py, щоб пом’якшити обмеження Ratelimiter, зареєструйтесь через Swagger або Postman, скопіюйте access_token у tests/seed.py, та запустіть.
 
 Для запуску тестів за допомогою pytest (наприклад, pytest tests/test_routes_auth.py -v aбо pytest --cov) потрібно у .env встановити параметр TEST у True (для unit тестів не обов’язково) і збільшити RATE_LIMITER_TIMES.

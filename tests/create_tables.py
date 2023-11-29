@@ -4,8 +4,6 @@ import sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-# https://stackoverflow.com/questions/16981921/relative-imports-in-python-3/16985066#16985066
-
 import asyncio
 
 from sqlalchemy.ext.asyncio import (
@@ -13,8 +11,8 @@ from sqlalchemy.ext.asyncio import (
     AsyncEngine,
 )
 
-from conf.config import settings
-from models import Base
+from src.conf.config import settings
+from src.database.models import Base
 
 
 engine: AsyncEngine = create_async_engine(
