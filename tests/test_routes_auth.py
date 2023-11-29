@@ -19,7 +19,7 @@ async def test_signup_user(client, user, monkeypatch):
         "/api/auth/signup",
         json=user,
     )
-    assert response.status_code == 201, response.text
+    assert response.status_code == 201, print(response.text)
     data = response.json()
     assert data["user"]["username"] == user.get("username")
     assert data["user"]["email"] == user.get("email")
@@ -38,7 +38,7 @@ async def test_repeat_signup_user(client, user):
 
 
 @pytest.mark.anyio
-async def test_login_user_not_confirmed(client, user):
+async def test_login_user_is_not_confirmed(client, user):
     response = await client.post(
         "/api/auth/login",
         data={"username": user.get("email"), "password": user.get("password")},

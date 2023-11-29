@@ -7,7 +7,6 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 import pickle
 import unittest
 from unittest.mock import MagicMock
-import uuid
 
 from sqlalchemy.engine.result import ChunkedIteratorResult
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,7 +35,7 @@ class MockRedis:
 class TestUsers(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         self.user = User(
-            id=uuid.uuid4(),
+            id=1,
             username="test",
             email="test@test.com",
             password="1234567890",

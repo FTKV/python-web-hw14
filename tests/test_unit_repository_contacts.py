@@ -7,7 +7,6 @@ sys.path.append(os.path.dirname(SCRIPT_DIR))
 from datetime import date
 import unittest
 from unittest.mock import MagicMock
-import uuid
 
 from sqlalchemy.engine.result import ChunkedIteratorResult
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,7 +25,7 @@ from src.repository.contacts import (
 
 class TestContacts(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
-        self.user = User(id=uuid.uuid4())
+        self.user = User(id=1)
         self.session = MagicMock(spec=AsyncSession)
         self.body = ContactModel(
             first_name="test",
@@ -84,7 +83,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.session.execute.return_value = MagicMock(spec=ChunkedIteratorResult)
         self.session.execute.return_value.scalar.return_value = None
         result = await read_contact(
-            contact_id=uuid.uuid4(),
+            contact_id=2,
             user=self.user,
             session=self.session,
         )
@@ -117,7 +116,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.session.execute.return_value = MagicMock(spec=ChunkedIteratorResult)
         self.session.execute.return_value.scalar.return_value = None
         result = await update_contact(
-            contact_id=uuid.uuid4(),
+            contact_id=2,
             body=self.body,
             user=self.user,
             session=self.session,
@@ -137,7 +136,7 @@ class TestContacts(unittest.IsolatedAsyncioTestCase):
         self.session.execute.return_value = MagicMock(spec=ChunkedIteratorResult)
         self.session.execute.return_value.scalar.return_value = None
         result = await delete_contact(
-            contact_id=uuid.uuid4(), user=self.user, session=self.session
+            contact_id=2, user=self.user, session=self.session
         )
         self.assertIsNone(result)
 
