@@ -8,27 +8,6 @@ from unittest.mock import MagicMock
 
 import cloudinary
 import pytest
-from sqlalchemy import select
-
-from src.database.models import User
-
-
-@pytest.fixture
-async def token(client, user, session, monkeypatch):
-    mock_send_email = MagicMock()
-    monkeypatch.setattr("src.routes.auth.send_email_for_verification", mock_send_email)
-    await client.post("/api/auth/signup", json=user)
-    stmt = select(User).filter(User.email == user.get("email"))
-    current_user = await session.execute(stmt)
-    current_user = current_user.scalar()
-    current_user.is_email_confirmed = True
-    await session.commit()
-    response = await client.post(
-        "/api/auth/login",
-        data={"username": user.get("email"), "password": user.get("password")},
-    )
-    data = response.json()
-    return data["access_token"]
 
 
 @pytest.mark.anyio

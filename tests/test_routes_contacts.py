@@ -4,55 +4,7 @@ import sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
-from datetime import date
-from unittest.mock import MagicMock
-
 import pytest
-from sqlalchemy import select
-
-from src.database.models import User
-
-
-@pytest.fixture
-def contact_to_create():
-    return {
-        "first_name": "test",
-        "last_name": "test",
-        "email": "test@test.com",
-        "phone": "1234567890",
-        "birthday": str(date.today()),
-        "address": "test",
-    }
-
-
-@pytest.fixture
-def contact_to_update():
-    return {
-        "first_name": "new_test",
-        "last_name": "new_test",
-        "email": "new_test@test.com",
-        "phone": "0987654321",
-        "birthday": str(date.today()),
-        "address": "new_test",
-    }
-
-
-@pytest.fixture
-async def token(client, user, session, monkeypatch):
-    mock_send_email = MagicMock()
-    monkeypatch.setattr("src.routes.auth.send_email_for_verification", mock_send_email)
-    await client.post("/api/auth/signup", json=user)
-    stmt = select(User).filter(User.email == user.get("email"))
-    current_user = await session.execute(stmt)
-    current_user = current_user.scalar()
-    current_user.is_email_confirmed = True
-    await session.commit()
-    response = await client.post(
-        "/api/auth/login",
-        data={"username": user.get("email"), "password": user.get("password")},
-    )
-    data = response.json()
-    return data["access_token"]
 
 
 @pytest.mark.anyio
