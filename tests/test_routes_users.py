@@ -42,7 +42,7 @@ async def test_read_me(client, token):
 
 
 @pytest.mark.anyio
-async def test_update_avatar(client, token, monkeypatch):
+async def test_update_avatar(client, token):
     avatar_url = "http://test.com/avatar"
     cloudinary.config = MagicMock()
     cloudinary.uploader.upload = MagicMock()
