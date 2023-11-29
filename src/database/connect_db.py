@@ -36,16 +36,18 @@ async def get_session():
 
 
 redis_db0 = redis.from_url(
-    settings.redis_url + "/0",
+    settings.redis_url,
+    db=0,
     encoding="utf-8",
     decode_responses=True,
 )
-pool_redis_db1 = redis.ConnectionPool.from_url(settings.redis_url + "/1")
+pool_redis_db = redis.ConnectionPool.from_url(settings.redis_url)
 
 
 async def get_redis_db1():
     client = redis.Redis(
-        connection_pool=pool_redis_db1,
+        connection_pool=pool_redis_db,
+        db=1,
         encoding="utf-8",
         decode_responses=False,
     )

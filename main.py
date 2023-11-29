@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import uvicorn
 
 from src.conf.config import settings
-from src.database.connect_db import get_session, redis_db0
+from src.database.connect_db import engine, get_session, redis_db0, pool_redis_db
 from src.routes import auth, contacts, users
 
 
@@ -25,6 +25,7 @@ async def lifespan(app: FastAPI):
     """
     await startup()
     yield
+    await shutdown()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -36,6 +37,15 @@ async def startup():
 
     """
     await FastAPILimiter.init(redis_db0)
+
+
+async def shutdown():
+    """
+    Handles shutdown events.
+
+    """
+    await pool_redis_db.disconnect()
+    await engine.dispose()
 
 
 origins = [f"{settings.api_protocol}://{settings.api_host}:{settings.api_port}"]
