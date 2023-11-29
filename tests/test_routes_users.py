@@ -36,7 +36,7 @@ async def test_read_me(client, token):
     response = await client.get(
         "/api/users/me", headers={"Authorization": f"Bearer {token}"}
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 200
     data = response.json()
     assert data["email"] == "test@test.com"
 
@@ -53,6 +53,6 @@ async def test_update_avatar(client, token, monkeypatch):
         files={"file": __file__},
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 200
     data = response.json()
     assert data["avatar"] == avatar_url

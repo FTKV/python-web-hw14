@@ -19,7 +19,7 @@ async def test_signup_user(client, user, monkeypatch):
         "/api/auth/signup",
         json=user,
     )
-    assert response.status_code == 201, print(response.text)
+    assert response.status_code == 201
     data = response.json()
     assert data["user"]["username"] == user.get("username")
     assert data["user"]["email"] == user.get("email")
@@ -32,7 +32,7 @@ async def test_repeat_signup_user(client, user):
         "/api/auth/signup",
         json=user,
     )
-    assert response.status_code == 409, response.text
+    assert response.status_code == 409
     data = response.json()
     assert data["detail"] == "The account already exists"
 
@@ -43,7 +43,7 @@ async def test_login_user_is_not_confirmed(client, user):
         "/api/auth/login",
         data={"username": user.get("email"), "password": user.get("password")},
     )
-    assert response.status_code == 401, response.text
+    assert response.status_code == 401
     data = response.json()
     assert data["detail"] == "The email is not confirmed"
 
@@ -57,7 +57,7 @@ async def test_login_user(client, session, user):
         "/api/auth/login",
         data={"username": user.get("email"), "password": user.get("password")},
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 200
     data = response.json()
     assert data["token_type"] == "bearer"
 
@@ -68,7 +68,7 @@ async def test_login_wrong_email(client, user):
         "/api/auth/login",
         data={"username": "email", "password": user.get("password")},
     )
-    assert response.status_code == 401, response.text
+    assert response.status_code == 401
     data = response.json()
     assert data["detail"] == "Invalid email"
 
@@ -79,6 +79,6 @@ async def test_login_wrong_password(client, user):
         "/api/auth/login",
         data={"username": user.get("email"), "password": "password"},
     )
-    assert response.status_code == 401, response.text
+    assert response.status_code == 401
     data = response.json()
     assert data["detail"] == "Invalid password"

@@ -37,7 +37,7 @@ async def test_create_contact(client, contact_to_create, token):
         json=contact_to_create,
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert response.status_code == 201, response.text
+    assert response.status_code == 201
     data = response.json()
     assert data["first_name"] == contact_to_create["first_name"]
     assert data["last_name"] == contact_to_create["last_name"]
@@ -55,7 +55,7 @@ async def test_repeat_create_contact(client, contact_to_create, token):
         json=contact_to_create,
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert response.status_code == 409, response.text
+    assert response.status_code == 409
     data = response.json()
     assert data["detail"] == "The contact's email and/or phone already exist"
 
@@ -65,7 +65,7 @@ async def test_read_contact(client, token, contact_to_create):
     response = await client.get(
         "/api/contacts/1", headers={"Authorization": f"Bearer {token}"}
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 200
     data = response.json()
     assert data["first_name"] == contact_to_create["first_name"]
     assert data["last_name"] == contact_to_create["last_name"]
@@ -81,7 +81,7 @@ async def test_read_contact_not_found(client, token):
     response = await client.get(
         "/api/contacts/2", headers={"Authorization": f"Bearer {token}"}
     )
-    assert response.status_code == 404, response.text
+    assert response.status_code == 404
     data = response.json()
     assert data["detail"] == "Contact not found"
 
@@ -91,7 +91,7 @@ async def test_read_contacts(client, token, contact_to_create):
     response = await client.get(
         "/api/contacts", headers={"Authorization": f"Bearer {token}"}
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
     assert data[0]["first_name"] == contact_to_create["first_name"]
@@ -109,7 +109,7 @@ async def test_read_contacts_birthdays_in_n_days(client, token, contact_to_creat
         "/api/contacts/birthdays_in_1_days",
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 200
     data = response.json()
     assert isinstance(data, list)
     assert data[0]["first_name"] == contact_to_create["first_name"]
@@ -128,7 +128,7 @@ async def test_update_contact(client, token, contact_to_update):
         json=contact_to_update,
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert response.status_code == 200, response.text
+    assert response.status_code == 200
     data = response.json()
     assert data["first_name"] == contact_to_update["first_name"]
     assert data["last_name"] == contact_to_update["last_name"]
@@ -146,7 +146,7 @@ async def test_update_contact_not_found(client, token, contact_to_update):
         json=contact_to_update,
         headers={"Authorization": f"Bearer {token}"},
     )
-    assert response.status_code == 404, response.text
+    assert response.status_code == 404
     data = response.json()
     assert data["detail"] == "Contact not found"
 
@@ -156,7 +156,7 @@ async def test_delete_contact(client, token):
     response = await client.delete(
         "/api/contacts/1", headers={"Authorization": f"Bearer {token}"}
     )
-    assert response.status_code == 204, response.text
+    assert response.status_code == 204
 
 
 @pytest.mark.anyio
@@ -164,6 +164,6 @@ async def test_repeat_delete_contact(client, token):
     response = await client.delete(
         "/api/contacts/1", headers={"Authorization": f"Bearer {token}"}
     )
-    assert response.status_code == 404, response.text
+    assert response.status_code == 404
     data = response.json()
     assert data["detail"] == "Contact not found"
