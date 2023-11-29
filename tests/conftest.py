@@ -1,6 +1,6 @@
 from datetime import date
-from httpx import AsyncClient
 from fastapi_limiter import FastAPILimiter
+from httpx import AsyncClient
 import pytest
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
