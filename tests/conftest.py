@@ -1,4 +1,3 @@
-from datetime import date
 from fastapi_limiter import FastAPILimiter
 from httpx import AsyncClient
 import pytest
@@ -66,28 +65,4 @@ def user():
         "username": "test",
         "email": "test@test.com",
         "password": "1234567890",
-    }
-
-
-@pytest.fixture(scope="session")
-def contact_to_create():
-    return {
-        "first_name": "test",
-        "last_name": "test",
-        "email": "test@test.com",
-        "phone": "1234567890",
-        "birthday": str(date.today()),
-        "address": "test",
-    }
-
-
-@pytest.fixture(scope="session")
-def contact_to_update():
-    return {
-        "first_name": "new_test",
-        "last_name": "new_test",
-        "email": "new_test@test.com",
-        "phone": "0987654321",
-        "birthday": str(date.today()),
-        "address": "new_test",
     }

@@ -4,12 +4,37 @@ import sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.append(os.path.dirname(SCRIPT_DIR))
 
+from datetime import date
 from unittest.mock import MagicMock
 
 import pytest
 from sqlalchemy import select
 
 from src.database.models import User
+
+
+@pytest.fixture
+def contact_to_create():
+    return {
+        "first_name": "test",
+        "last_name": "test",
+        "email": "test@test.com",
+        "phone": "1234567890",
+        "birthday": str(date.today()),
+        "address": "test",
+    }
+
+
+@pytest.fixture
+def contact_to_update():
+    return {
+        "first_name": "new_test",
+        "last_name": "new_test",
+        "email": "new_test@test.com",
+        "phone": "0987654321",
+        "birthday": str(date.today()),
+        "address": "new_test",
+    }
 
 
 @pytest.fixture
