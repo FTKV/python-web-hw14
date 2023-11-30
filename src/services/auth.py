@@ -1,3 +1,8 @@
+"""
+Module of authentication class and methods
+"""
+
+
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 

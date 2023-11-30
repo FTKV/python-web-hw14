@@ -1,3 +1,8 @@
+"""
+Module of contacts' routes
+"""
+
+
 from pydantic import UUID4
 from typing import List
 

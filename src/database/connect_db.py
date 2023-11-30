@@ -1,3 +1,8 @@
+"""
+Module with declaring of connections to PostgreSQL and Redis
+"""
+
+
 from fastapi import HTTPException, status
 import redis.asyncio as redis
 from sqlalchemy.exc import SQLAlchemyError

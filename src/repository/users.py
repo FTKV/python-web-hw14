@@ -1,3 +1,8 @@
+"""
+Module of users' CRUD
+"""
+
+
 import pickle
 
 from libgravatar import Gravatar

@@ -1,3 +1,8 @@
+"""
+Module of contacts' schemas
+"""
+
+
 from datetime import datetime, date
 from pydantic import BaseModel, Field, EmailStr, UUID4, ConfigDict
 

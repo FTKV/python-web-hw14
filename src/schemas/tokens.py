@@ -1,3 +1,8 @@
+"""
+Module of tokens' schemas
+"""
+
+
 from pydantic import BaseModel
 
 

@@ -1,3 +1,8 @@
+"""
+Module of authentication routes
+"""
+
+
 from fastapi import (
     APIRouter,
     HTTPException,

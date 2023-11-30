@@ -1,3 +1,8 @@
+"""
+Module of contacts' CRUD
+"""
+
+
 from collections import defaultdict
 from datetime import date, timedelta
 from pydantic import UUID4

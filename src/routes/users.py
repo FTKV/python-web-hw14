@@ -1,3 +1,8 @@
+"""
+Module of users' routes
+"""
+
+
 import cloudinary
 import cloudinary.uploader
 from fastapi import APIRouter, HTTPException, Depends, UploadFile, File, status

@@ -1,3 +1,8 @@
+"""
+Module with declaring of SQLAlchemy models
+"""
+
+
 from datetime import datetime, date
 
 from sqlalchemy import (

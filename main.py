@@ -1,3 +1,8 @@
+"""
+Main module
+"""
+
+
 from contextlib import asynccontextmanager
 import pathlib
 from time import time
@@ -61,11 +66,22 @@ app.add_middleware(
 
 
 @app.middleware("http")
-async def add_process_time_header(request: Request, call_next):
+async def add_process_time_header(request: Request, call_next: callable):
+    """
+    Calculates a request's processing time.
+
+    :param request: The request object.
+    :type request: Request
+    :param call_next: The next request's handler.
+    :type call_next: callable
+    :return: The response.
+    :rtype: starlette.middleware.base._StreamingResponse
+    """
     start_time = time()
     response = await call_next(request)
     process_time = time() - start_time
     response.headers["API-Process-Time"] = str(process_time)
+    print(type(call_next))
     return response
 
 
