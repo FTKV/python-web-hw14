@@ -28,7 +28,9 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email_for_verification(email: EmailStr, username: str, host: HttpUrl):
+async def send_email_for_verification(
+    email: EmailStr, username: str, email_verification_token: str, host: HttpUrl
+):
     """
     Sends an email for verification of the user's email.
 
@@ -36,31 +38,34 @@ async def send_email_for_verification(email: EmailStr, username: str, host: Http
     :type email: EmailStr
     :param username: The user's username.
     :type username: User
+    :param email_verification_token: The email verification token.
+    :type email_verification_token: str
     :param host: The api host.
     :type host: HttpUrl
     :return: None.
     :rtype: None
     """
     try:
-        token = await auth_service.create_email_verification_token({"sub": email})
         message = MessageSchema(
             subject="Confirm your email",
             recipients=[email],
             template_body={
                 "host": host,
                 "username": username,
-                "token": token,
+                "token": email_verification_token,
             },
             subtype=MessageType.html,
         )
 
         fm = FastMail(conf)
         await fm.send_message(message, template_name="verification_email.html")
-    except ConnectionErrors:
-        pass
+    except ConnectionErrors as error_message:
+        print(f"Connection error: {str(error_message)}")
 
 
-async def send_email_for_password_reset(email: EmailStr, username: str, host: HttpUrl):
+async def send_email_for_password_reset(
+    email: EmailStr, username: str, password_reset_token: str, host: HttpUrl
+):
     """
     Sends an email for the user's password reset.
 
@@ -68,25 +73,26 @@ async def send_email_for_password_reset(email: EmailStr, username: str, host: Ht
     :type email: EmailStr
     :param username: The user's username.
     :type username: User
+    :param password_reset_token: The password reset token.
+    :type password_reset_token: str
     :param host: The api url.
     :type host: HttpUrl
     :return: None.
     :rtype: None
     """
     try:
-        token = await auth_service.create_password_reset_token({"sub": email})
         message = MessageSchema(
             subject="Password reset",
             recipients=[email],
             template_body={
                 "host": host,
                 "username": username,
-                "token": token,
+                "token": password_reset_token,
             },
             subtype=MessageType.html,
         )
 
         fm = FastMail(conf)
         await fm.send_message(message, template_name="password_reset_email.html")
-    except ConnectionErrors:
-        pass
+    except ConnectionErrors as error_message:
+        print(f"Connection error: {str(error_message)}")

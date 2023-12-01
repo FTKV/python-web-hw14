@@ -68,8 +68,8 @@ async def client(session):
 
 @pytest.fixture(scope="function")
 async def token(client, user, session, monkeypatch):
-    mock_send_email = MagicMock()
-    monkeypatch.setattr("src.routes.auth.send_email_for_verification", mock_send_email)
+    mock_add_task = MagicMock()
+    monkeypatch.setattr("fastapi.BackgroundTasks.add_task", mock_add_task)
     await client.post("/api/auth/signup", json=user)
     stmt = select(User).filter(User.email == user.get("email"))
     current_user = await session.execute(stmt)
@@ -91,6 +91,16 @@ def user():
         "email": "test@test.com",
         "password": "1234567890",
     }
+
+
+@pytest.fixture(scope="session")
+def wrong_email():
+    return "wrong@test.com"
+
+
+@pytest.fixture(scope="session")
+def new_password():
+    return "0987654321"
 
 
 @pytest.fixture(scope="session")

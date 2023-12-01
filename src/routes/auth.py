@@ -71,8 +71,15 @@ async def signup(
         )
     body.password = auth_service.get_password_hash(body.password)
     user = await repository_users.create_user(body, session, cache)
+    email_verification_token = await auth_service.create_email_verification_token(
+        {"sub": user.email}
+    )
     background_tasks.add_task(
-        send_email_for_verification, user.email, user.username, request.base_url
+        send_email_for_verification,
+        user.email,
+        user.username,
+        email_verification_token,
+        request.base_url,
     )
     return {
         "user": user,
@@ -189,8 +196,15 @@ async def request_verification_email(
         if user.is_email_confirmed:
             return {"message": "The email is already confirmed"}
         if user.is_password_valid:
+            email_verification_token = (
+                await auth_service.create_email_verification_token({"sub": user.email})
+            )
             background_tasks.add_task(
-                send_email_for_verification, user.email, user.username, request.base_url
+                send_email_for_verification,
+                user.email,
+                user.username,
+                email_verification_token,
+                request.base_url,
             )
     return {"message": "Check your email for confirmation"}
 
@@ -246,10 +260,14 @@ async def request_password_reset_email(
     """
     user = await repository_users.get_user_by_email(body.email, session)
     if user and user.is_email_confirmed:
+        password_reset_token = await auth_service.create_password_reset_token(
+            {"sub": user.email}
+        )
         background_tasks.add_task(
             send_email_for_password_reset,
             user.email,
             user.username,
+            password_reset_token,
             request.base_url,
         )
     return {"message": "Check your email for a password reset"}

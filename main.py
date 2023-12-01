@@ -81,7 +81,6 @@ async def add_process_time_header(request: Request, call_next: callable):
     response = await call_next(request)
     process_time = time() - start_time
     response.headers["API-Process-Time"] = str(process_time)
-    print(type(call_next))
     return response
 
 

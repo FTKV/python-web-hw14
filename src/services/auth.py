@@ -245,6 +245,10 @@ class Auth:
                 if email is None:
                     raise credentials_exception
                 return email
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid scope for token",
+            )
         except JWTError:
             raise credentials_exception
 
@@ -270,6 +274,10 @@ class Auth:
                 if email is None:
                     raise credentials_exception
                 return email
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid scope for token",
+            )
         except JWTError:
             raise credentials_exception
 
@@ -295,6 +303,10 @@ class Auth:
                 if email is None:
                     raise credentials_exception
                 return email
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid scope for token",
+            )
         except JWTError:
             raise credentials_exception
 
