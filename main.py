@@ -51,6 +51,7 @@ async def shutdown():
 
     """
     await pool_redis_db.disconnect()
+    await redis_db0.flushall()
     await engine.dispose()
 
 
