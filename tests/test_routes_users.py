@@ -11,13 +11,13 @@ import pytest
 
 
 @pytest.mark.anyio
-async def test_read_me(client, token):
+async def test_read_me(client, user, token):
     response = await client.get(
         "/api/users/me", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200, response.text
     data = response.json()
-    assert data["email"] == "test@test.com"
+    assert data["email"] == user.get("email")
 
 
 @pytest.mark.anyio
