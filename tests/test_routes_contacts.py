@@ -81,9 +81,61 @@ async def test_read_contacts(client, token, contact_to_create):
 
 
 @pytest.mark.anyio
+async def test_read_contacts_search(
+    client,
+    token,
+    contact_to_create,
+    offset=0,
+    limit=1000,
+    first_name="test",
+    last_name="test",
+    email="test",
+):
+    response = await client.get(
+        f"/api/contacts?offset={offset}&limit={limit}&first_name={first_name}&last_name={last_name}&email={email}",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert isinstance(data, list)
+    assert data[0]["first_name"] == contact_to_create["first_name"]
+    assert data[0]["last_name"] == contact_to_create["last_name"]
+    assert data[0]["email"] == contact_to_create["email"]
+    assert data[0]["phone"] == contact_to_create["phone"]
+    assert data[0]["birthday"] == contact_to_create["birthday"]
+    assert data[0]["address"] == contact_to_create["address"]
+    assert "id" in data[0]
+
+
+@pytest.mark.anyio
 async def test_read_contacts_birthdays_in_n_days(client, token, contact_to_create):
     response = await client.get(
         "/api/contacts/birthdays_in_1_days",
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert response.status_code == 200, response.text
+    data = response.json()
+    assert isinstance(data, list)
+    assert data[0]["first_name"] == contact_to_create["first_name"]
+    assert data[0]["last_name"] == contact_to_create["last_name"]
+    assert data[0]["email"] == contact_to_create["email"]
+    assert data[0]["phone"] == contact_to_create["phone"]
+    assert data[0]["birthday"] == contact_to_create["birthday"]
+    assert data[0]["address"] == contact_to_create["address"]
+    assert "id" in data[0]
+
+
+@pytest.mark.anyio
+async def test_read_contacts_birthdays_in_n_days_ext(
+    client,
+    token,
+    contact_to_create,
+    n=1,
+    offset=0,
+    limit=1000,
+):
+    response = await client.get(
+        f"/api/contacts/birthdays_in_1_days?n={n}&offset={offset}&limit={limit}",
         headers={"Authorization": f"Bearer {token}"},
     )
     assert response.status_code == 200, response.text

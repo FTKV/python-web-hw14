@@ -34,4 +34,4 @@ class UserDb(BaseModel):
 
 class UserResponse(BaseModel):
     user: UserDb
-    detail: str = "User successfully created"
+    message: str = "User successfully created"

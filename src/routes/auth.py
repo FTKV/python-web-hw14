@@ -83,7 +83,7 @@ async def signup(
     )
     return {
         "user": user,
-        "detail": "The user successfully created. Check your email for confirmation",
+        "message": "The user successfully created. Check your email for confirmation",
     }
 
 

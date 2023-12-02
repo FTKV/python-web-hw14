@@ -10,7 +10,6 @@ from fastapi_mail.errors import ConnectionErrors
 from pydantic import EmailStr, HttpUrl
 
 from src.conf.config import settings
-from src.services.auth import auth_service
 
 
 conf = ConnectionConfig(
