@@ -12,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.conf.config import settings
-from src.database.models import User
+from src.database.models import Role, User
 from src.schemas.users import UserModel
 
 
@@ -76,13 +76,19 @@ async def create_user(body: UserModel, session: AsyncSession, cache: Redis) -> U
     :return: The newly created user.
     :rtype: User
     """
+    stmt = select(User)
+    users = await session.execute(stmt)
+    if users.scalars().all():
+        role = Role.user
+    else:
+        role = Role.administrator
     avatar = None
     try:
         g = Gravatar(body.email)
         avatar = g.get_image()
     except Exception:
         pass
-    user = User(**body.model_dump(), avatar=avatar)
+    user = User(**body.model_dump(), avatar=avatar, role=role)
     session.add(user)
     await session.commit()
     await session.refresh(user)

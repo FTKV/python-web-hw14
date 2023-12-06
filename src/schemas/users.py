@@ -30,6 +30,7 @@ class UserDb(BaseModel):
     created_at: datetime
     updated_at: datetime
     avatar: HttpUrl
+    role: str
 
 
 class UserResponse(BaseModel):
