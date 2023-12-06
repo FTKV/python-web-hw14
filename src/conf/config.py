@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     api_protocol: str
     api_host: str = "localhost"
     api_port: int = 8000
-    secret_key: str
+    secret_key_length: int
     algorithm: str
     sqlalchemy_database_url_sync: str
     sqlalchemy_database_url_async: str

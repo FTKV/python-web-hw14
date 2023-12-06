@@ -4,6 +4,7 @@ Module of authentication class and methods
 
 
 from datetime import datetime, timedelta, timezone
+from os import urandom
 from typing import Optional
 
 from jose import JWTError, jwt
@@ -20,7 +21,7 @@ from src.repository import users as repository_users
 
 class Auth:
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    SECRET_KEY = settings.secret_key
+    SECRET_KEY = urandom(settings.secret_key_length)
     ALGORITHM = settings.algorithm
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 

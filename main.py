@@ -42,6 +42,8 @@ async def startup():
     Handles startup events.
 
     """
+    await pool_redis_db.disconnect()
+    await redis_db0.flushall()
     await FastAPILimiter.init(redis_db0)
 
 
