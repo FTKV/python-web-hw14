@@ -18,7 +18,7 @@
 
 Для запуску необхідно виконати наступні дії:
 
-1. docker-compose up -d
+1. docker-compose --env-file app/.env up -d
 
 2. alembic init migrations
 
