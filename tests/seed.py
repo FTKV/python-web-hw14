@@ -9,10 +9,11 @@ import asyncio
 import faker
 from httpx import AsyncClient
 
-from src.conf.config import settings
+from app.src.conf.config import settings
 
 
-ACCESS_TOKEN = ""
+EMAIL = ""
+PASSWORD = ""
 
 NUMBER_OF_CONTACTS = 1000
 
@@ -32,13 +33,19 @@ async def get_fake_contacts():
 
 
 async def send_data_to_api() -> None:
+    client = AsyncClient(
+        base_url=f"{settings.api_protocol}://{settings.api_host}:{settings.api_port}"
+    )
+    response = await client.post(
+        "/api/auth/login",
+        data={"username": EMAIL, "password": PASSWORD},
+    )
+    data = response.json()
+    ACCESS_TOKEN = data["access_token"]
     headers = {
         "content-type": "application/json",
         "Authorization": f"Bearer {ACCESS_TOKEN}",
     }
-    client = AsyncClient(
-        base_url=f"{settings.api_protocol}://{settings.api_host}:{settings.api_port}"
-    )
     async for json in get_fake_contacts():
         try:
             await client.post(

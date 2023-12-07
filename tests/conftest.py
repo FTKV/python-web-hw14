@@ -1,3 +1,9 @@
+import os
+import sys
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(f"{os.path.dirname(SCRIPT_DIR)}/app")
+
 from datetime import date
 from unittest.mock import MagicMock
 
@@ -12,9 +18,8 @@ from sqlalchemy.ext.asyncio import (
     async_sessionmaker,
 )
 
-from src.database.models import User
-
 from main import app
+from src.database.models import User
 from src.conf.config import settings
 from src.database.models import Base, User
 from src.database.connect_db import get_session, redis_db0
